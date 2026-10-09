@@ -163,7 +163,7 @@ while True:
             body_bytes += f"--{boundary}--\r\n".encode('utf-8')
 
             request_head = (
-                f"POST {new_address} HTTP/1.1\r\n"
+                f"POST {next_url} HTTP/1.1\r\n"
                 f"Host: {HOST}\r\n"
                 f"{s_headers}"
                 f"{s_cookies}"
@@ -182,7 +182,7 @@ while True:
 
             data_len = len(s_data.encode('utf-8'))
             request_to_send = (
-                f"POST {new_address} HTTP/1.1\r\n"
+                f"POST {next_url} HTTP/1.1\r\n"
                 f"Host: {HOST}\r\n"
                 f"{s_headers}"
                 f"{s_cookies}"
@@ -196,7 +196,7 @@ while True:
     else:
         full_path = new_address + s_params
         request_to_send = (
-            f"GET {full_path} HTTP/1.1\r\n"
+            f"GET {next_url} HTTP/1.1\r\n"
             f"Host: {HOST}\r\n"
             f"{s_headers}"
             f"{s_cookies}"
