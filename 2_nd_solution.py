@@ -108,10 +108,12 @@ while True:
 
     next_url = URL + new_address
 
-
     s_params = ""
     if len(new_params) != 0:
-        s_params = "?" + urllib.parse.urlencode(new_params)
+        arr_params = []
+        for key, value in new_params.items():
+            arr_params.append(f"{key}={value}")
+        s_params = "?" + "&".join(arr_params)
 
     s_headers = ""
     if len(new_headers) != 0:
@@ -136,12 +138,14 @@ while True:
         for key, (file_name, file_link) in new_files.items():
             arr_data.append(f"name={file_name}")
             arr_data.append(f"link={file_link}")
-
     s_data = "&".join(arr_data)
+
 
     is_post = False
     if new_files or new_data or soup.find(string=re.compile("POST-запрос", re.IGNORECASE)):
         is_post = True
+
+    full_path = new_address + s_params
 
     if is_post:
         if len(new_files) != 0:
@@ -163,7 +167,7 @@ while True:
             body_bytes += f"--{boundary}--\r\n".encode('utf-8')
 
             request_head = (
-                f"POST {next_url} HTTP/1.1\r\n"
+                f"POST {full_path} HTTP/1.1\r\n"
                 f"Host: {HOST}\r\n"
                 f"{s_headers}"
                 f"{s_cookies}"
@@ -182,7 +186,7 @@ while True:
 
             data_len = len(s_data.encode('utf-8'))
             request_to_send = (
-                f"POST {next_url} HTTP/1.1\r\n"
+                f"POST {full_path} HTTP/1.1\r\n"
                 f"Host: {HOST}\r\n"
                 f"{s_headers}"
                 f"{s_cookies}"
@@ -194,9 +198,8 @@ while True:
             ).encode('utf-8')
 
     else:
-        full_path = new_address + s_params
         request_to_send = (
-            f"GET {next_url} HTTP/1.1\r\n"
+            f"GET {full_path} HTTP/1.1\r\n"
             f"Host: {HOST}\r\n"
             f"{s_headers}"
             f"{s_cookies}"
@@ -206,7 +209,6 @@ while True:
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((HOST, 80))
-
     s.sendall(request_to_send)
 
     response_bytes = b""
