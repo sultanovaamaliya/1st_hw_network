@@ -1,6 +1,5 @@
 import socket
 import re
-import urllib.parse
 from bs4 import BeautifulSoup
 
 HOST = "hw1.alexbers.com"
@@ -182,7 +181,10 @@ while True:
         else:
             s_data = ""
             if len(new_data) != 0:
-                s_data = urllib.parse.urlencode(new_data)
+                arr_data = []
+                for key, value in new_data.items():
+                    arr_data.append(f"{key}={value}")
+                s_data = "&".join(arr_data)
 
             data_len = len(s_data.encode('utf-8'))
             request_to_send = (
